@@ -1,0 +1,1027 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Sira Bet</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&family=Schibsted+Grotesk:wght@400;500;600&family=Sora:wght@600;700&display=swap">
+<style>
+/* Layout: filter sidebar on the left (stacked on phones), one divided list of jobs on the right, post form at the bottom. */
+:root {
+  --bg: #F2F5F1;
+  --surface: #FFFFFF;
+  --fg: #15211C;
+  --muted: #52615A;
+  --line: #D5DDD6;
+  --accent: #0E6B4D;
+  --accent-fg: #FFFFFF;
+  --accent-soft: #DDEFE6;
+  --warn: #7A4F00;
+  --warn-soft: #FBEBC8;
+  --display: "Bricolage Grotesque", "Noto Sans Ethiopic", system-ui, sans-serif;
+  --body: "Schibsted Grotesk", "Noto Sans Ethiopic", system-ui, sans-serif;
+  --title: "Sora", "Noto Sans Ethiopic", "Segoe UI", system-ui, sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1713; --surface: #17221D; --fg: #E6EEE9; --muted: #9BAAA2; --line: #2A3831;
+    --accent: #4FC596; --accent-fg: #06281B; --accent-soft: #1B3A2D; --warn: #F0C066; --warn-soft: #3A2D10;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1713; --surface: #17221D; --fg: #E6EEE9; --muted: #9BAAA2; --line: #2A3831;
+  --accent: #4FC596; --accent-fg: #06281B; --accent-soft: #1B3A2D; --warn: #F0C066; --warn-soft: #3A2D10;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1080px; margin-inline: auto; padding-inline: 16px; padding-block: 20px 56px; }
+h1, h2, h3, h4 { text-wrap: balance; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand h1 { margin: 0; font: 700 1.9rem/1.1 var(--display); letter-spacing: -0.01em; }
+.brand small { display: block; color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+.top-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+.lang button { border: 0; background: transparent; color: var(--fg); padding: 6px 16px; border-radius: 999px; font: inherit; cursor: pointer; min-height: 38px; }
+.lang button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
+
+#view-jobs { padding-top: 22px; }
+.lede { margin: 0 0 14px; font: 600 clamp(1.3rem, 3.5vw, 1.75rem)/1.25 var(--display); }
+.notices { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.notice { margin: 0; padding: 10px 14px; border-radius: 8px; font-size: 0.92rem; background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
+.notice.alert { background: var(--warn-soft); border-color: transparent; color: var(--warn); font-weight: 500; }
+
+.layout { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 860px) {
+  .layout { grid-template-columns: 260px minmax(0, 1fr); align-items: start; }
+  .filters { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+}
+.filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.filters h2, .filters .field:first-of-type, .filters .btn { grid-column: 1 / -1; }
+@media (min-width: 860px) { .filters { grid-template-columns: minmax(0, 1fr); } }
+.filters h2 { margin: 0; font: 600 1rem/1.2 var(--display); }
+.field { display: grid; gap: 5px; min-width: 0; }
+.field label { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+input[type="text"], input[type="date"], select, textarea {
+  width: 100%; font: inherit; color: var(--fg); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 44px;
+}
+textarea { min-height: 96px; resize: vertical; }
+.btn { font: inherit; font-weight: 500; border: 1px solid var(--accent); color: var(--accent); background: transparent; border-radius: 8px; padding: 8px 14px; min-height: 40px; cursor: pointer; }
+.btn:hover { background: var(--accent-soft); }
+.btn.primary { background: var(--accent); color: var(--accent-fg); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.quiet { border-color: var(--line); color: var(--muted); }
+.btn[aria-pressed="true"], .btn.quiet[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.sharebox { margin-top: 8px; font-size: 0.9rem; }
+
+.count { margin: 0 0 10px; color: var(--muted); font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+.jobs { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.job { padding: 16px; border-top: 1px solid var(--line); min-width: 0; }
+.job:first-child { border-top: 0; }
+.job.fresh { background: var(--accent-soft); }
+.job-head { display: flex; gap: 8px 12px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+.job h3 { margin: 0; font: 700 1.1rem/1.3 var(--title); letter-spacing: -0.005em; }
+.alt { color: var(--muted); font-size: 0.9rem; margin: 1px 0 0; }
+.meta { color: var(--muted); font-size: 0.92rem; margin: 6px 0 0; overflow-wrap: anywhere; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { font-size: 0.8rem; padding: 3px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 500; }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.plain { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+.job-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.salary { font-weight: 600; font-variant-numeric: tabular-nums; }
+.salary.none { font-weight: 400; color: var(--muted); }
+.detail { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); display: grid; gap: 14px; }
+.detail h4 { margin: 0 0 4px; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.detail p { margin: 0; max-width: 65ch; }
+.detail ul { margin: 0; padding-left: 1.2em; display: grid; gap: 3px; max-width: 65ch; }
+.contact { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.contact code { font-family: var(--mono); font-size: 0.9rem; background: var(--bg); border: 1px solid var(--line); padding: 6px 10px; border-radius: 6px; overflow-wrap: anywhere; user-select: all; }
+.hint { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; }
+.empty { padding: 32px 16px; text-align: center; color: var(--muted); display: grid; gap: 12px; justify-items: center; }
+
+.post { margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--line); }
+.post h2 { margin: 0 0 6px; font: 700 1.4rem/1.2 var(--display); }
+.post > p { margin: 0 0 18px; color: var(--muted); max-width: 62ch; }
+.form { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.form .full { grid-column: 1 / -1; }
+.form-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.msg { margin: 0; font-size: 0.92rem; }
+.msg.err { color: var(--warn); font-weight: 500; }
+.msg.ok { color: var(--accent); font-weight: 500; }
+a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+
+.nav { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 18px; border-bottom: 1px solid var(--line); }
+.nav a { padding: 8px 16px; min-height: 44px; display: inline-flex; align-items: center; color: var(--muted); text-decoration: none; font-weight: 500; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.nav a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
+
+.hero { display: grid; gap: 16px; padding-block: 30px 6px; }
+.hero h2 { margin: 0; font: 700 clamp(1.9rem, 6vw, 3.2rem)/1.1 var(--display); letter-spacing: -0.02em; max-width: 18ch; }
+.hero p { margin: 0; color: var(--muted); max-width: 52ch; font-size: 1.05rem; }
+.hero-search { display: flex; gap: 8px; flex-wrap: wrap; max-width: 560px; }
+.hero-search input { flex: 1 1 220px; width: auto; }
+.section { margin-top: 40px; }
+.section > h3 { margin: 0 0 14px; font: 650 1.25rem/1.25 var(--display); }
+.section > .more { margin: 14px 0 0; }
+.fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.fieldlink { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left; font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-height: 48px; cursor: pointer; }
+.fieldlink:hover { border-color: var(--accent); }
+.fieldlink b { font-variant-numeric: tabular-nums; color: var(--accent); }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; counter-reset: step; }
+.steps li { counter-increment: step; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+.steps li::before { content: counter(step); display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--accent-fg); font-weight: 600; margin-bottom: 8px; }
+.cta { margin-top: 40px; padding: 22px 18px; border-radius: 12px; background: var(--accent); color: var(--accent-fg); display: flex; gap: 16px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+.cta h3 { margin: 0 0 4px; font: 650 1.25rem/1.25 var(--display); }
+.cta p { margin: 0; }
+.cta .btn { background: var(--accent-fg); color: var(--accent); border-color: var(--accent-fg); }
+.tips { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 24px; }
+.tipcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; min-width: 0; }
+.tipcard h3 { margin: 0 0 10px; font: 650 1.1rem/1.3 var(--display); }
+.tipcard ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.tipcard.flag { background: var(--warn-soft); border-color: transparent; color: var(--warn); }
+.chip.done { background: var(--accent); color: var(--accent-fg); }
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.ill { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; min-width: 0; }
+.ill svg { display: block; width: 100%; height: auto; }
+.ill figcaption { padding: 10px 14px 12px; font-weight: 500; }
+.i-bg { fill: var(--accent-soft); }
+.i-desk { fill: var(--line); }
+.i-ink { fill: var(--fg); }
+.i-ink2 { fill: var(--muted); }
+.i-pane { fill: var(--surface); }
+.i-acc { fill: var(--accent); }
+.i-acc2 { fill: var(--accent); opacity: 0.55; }
+.i-line { fill: var(--muted); opacity: 0.35; }
+.i-stroke { fill: none; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; }
+.about { margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--line); display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.about > div, .about dl { min-width: 0; }
+.about h2 { margin: 0 0 8px; font: 700 1.4rem/1.2 var(--display); }
+.about p { margin: 0; color: var(--muted); max-width: 56ch; }
+.about dl { margin: 0; display: grid; gap: 14px; }
+.about dt { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.about dd { margin: 3px 0 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; min-width: 0; }
+.about code { font-family: var(--mono); font-size: 0.92rem; background: var(--surface); border: 1px solid var(--line); padding: 6px 10px; border-radius: 6px; overflow-wrap: anywhere; user-select: all; }
+.statline { margin: 0; color: var(--muted); font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+.statline b { color: var(--fg); font-weight: 600; }
+.filters .sub { grid-column: 1 / -1; margin: 0; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.checkcard { margin-top: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; min-width: 0; }
+.checkcard-head { display: flex; justify-content: space-between; align-items: center; gap: 10px 16px; flex-wrap: wrap; }
+.checkcard h3 { margin: 0; font: 650 1.1rem/1.3 var(--display); }
+.progress { margin: 10px 0 0; height: 6px; border-radius: 999px; background: var(--accent-soft); overflow: hidden; }
+.progress span { display: block; height: 100%; background: var(--accent); width: 0; }
+.progress-label { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+.checks { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 4px; }
+.checks label { display: flex; gap: 12px; align-items: flex-start; padding: 10px 6px; min-height: 44px; cursor: pointer; border-radius: 8px; }
+.checks label:hover { background: var(--bg); }
+.checks input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
+.checks input:checked + span { color: var(--muted); text-decoration: line-through; }
+@media (prefers-reduced-motion: no-preference) { .progress span { transition: width 0.2s; } }
+@media (prefers-reduced-motion: no-preference) { .btn, .lang button { transition: background 0.15s, filter 0.15s; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>ሥራ ቤት</h1>
+      <small>Sira Bet · Job Home</small>
+    </div>
+    <div class="top-actions">
+      <div class="lang" role="group" aria-label="Language / ቋንቋ">
+        <button type="button" data-lang="am" aria-pressed="false">አማርኛ</button>
+        <button type="button" data-lang="en" aria-pressed="true">English</button>
+      </div>
+      <button type="button" class="btn quiet" id="themeBtn">Dark mode</button>
+      <button type="button" class="btn primary" id="goPost" data-i18n="postBtn">Post a job</button>
+    </div>
+  </header>
+  <nav class="nav" aria-label="Pages">
+    <a href="#home" data-route="home" data-i18n="navHome" aria-current="page">Home</a>
+    <a href="#jobs" data-route="jobs" data-i18n="navJobs">Jobs</a>
+    <a href="#tips" data-route="tips" data-i18n="navTips">Tips</a>
+  </nav>
+
+  <div class="view" id="view-home">
+    <section class="hero">
+      <h2 data-i18n="homeTitle">Find your next job near you</h2>
+      <p data-i18n="homeSub">Search jobs, internships and freelance work in Amharic or English.</p>
+      <form class="hero-search" id="heroSearch" role="search">
+        <input type="text" id="heroQ" autocomplete="off" aria-label="Search" data-i18n-ph="searchPh" placeholder="Job title or company">
+        <button type="submit" class="btn primary" data-i18n="searchBtn">Search jobs</button>
+      </form>
+      <p class="statline" id="statline" aria-live="polite"></p>
+      <p class="notice alert" data-i18n="scam">Never pay money to get a job. Real employers do not charge to apply.</p>
+    </section>
+    <section class="section">
+      <h3 data-i18n="galTitle">Work all around you</h3>
+      <div class="gallery">
+        <figure class="ill">
+          <svg viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+            <rect width="240" height="150" class="i-bg"/>
+            <rect y="112" width="240" height="38" class="i-desk"/>
+            <rect x="68" y="50" width="104" height="64" rx="6" class="i-ink"/>
+            <rect x="75" y="57" width="90" height="50" rx="3" class="i-pane"/>
+            <rect x="83" y="66" width="46" height="5" rx="2.5" class="i-acc"/>
+            <rect x="83" y="77" width="70" height="5" rx="2.5" class="i-line"/>
+            <rect x="83" y="88" width="38" height="5" rx="2.5" class="i-line"/>
+            <rect x="54" y="114" width="132" height="7" rx="3.5" class="i-ink"/>
+            <rect x="194" y="92" width="18" height="22" rx="3" class="i-acc"/>
+            <path d="M203 92c-9-12-8-24 0-34 8 10 9 22 0 34z" class="i-acc2"/>
+          </svg>
+          <figcaption data-i18n="gal1">Find work that fits you</figcaption>
+        </figure>
+        <figure class="ill">
+          <svg viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+            <rect width="240" height="150" class="i-bg"/>
+            <rect y="112" width="240" height="38" class="i-desk"/>
+            <circle cx="70" cy="52" r="14" class="i-ink"/>
+            <path d="M44 112v-20a26 26 0 0 1 52 0v20z" class="i-acc"/>
+            <circle cx="170" cy="52" r="14" class="i-ink"/>
+            <path d="M144 112v-20a26 26 0 0 1 52 0v20z" class="i-ink2"/>
+            <rect x="92" y="86" width="56" height="12" rx="6" class="i-ink"/>
+          </svg>
+          <figcaption data-i18n="gal2">Meet employers</figcaption>
+        </figure>
+        <figure class="ill">
+          <svg viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+            <rect width="240" height="150" class="i-bg"/>
+            <rect y="118" width="240" height="32" class="i-desk"/>
+            <rect x="26" y="20" width="132" height="80" rx="5" class="i-ink"/>
+            <rect x="33" y="27" width="118" height="66" rx="2" class="i-pane"/>
+            <path d="M46 46h48M46 60h74M46 74h36" class="i-stroke"/>
+            <circle cx="192" cy="62" r="13" class="i-ink"/>
+            <path d="M168 120v-18a24 24 0 0 1 48 0v18z" class="i-acc"/>
+          </svg>
+          <figcaption data-i18n="gal3">Teach and learn</figcaption>
+        </figure>
+        <figure class="ill">
+          <svg viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+            <rect width="240" height="150" class="i-bg"/>
+            <rect y="118" width="240" height="32" class="i-desk"/>
+            <rect x="82" y="22" width="76" height="100" rx="8" class="i-ink"/>
+            <rect x="90" y="34" width="60" height="80" rx="3" class="i-pane"/>
+            <rect x="104" y="16" width="32" height="14" rx="5" class="i-acc"/>
+            <path d="M120 46v28M106 60h28" class="i-stroke"/>
+            <rect x="98" y="88" width="44" height="4" rx="2" class="i-line"/>
+            <rect x="98" y="98" width="30" height="4" rx="2" class="i-line"/>
+            <circle cx="196" cy="96" r="14" class="i-acc2"/>
+            <circle cx="44" cy="96" r="14" class="i-acc2"/>
+          </svg>
+          <figcaption data-i18n="gal4">Care and health jobs</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section class="section">
+      <h3 data-i18n="browse">Browse by field</h3>
+      <div class="fields" id="fieldLinks"></div>
+    </section>
+    <section class="section">
+      <h3 data-i18n="closingSoon">Closing soon</h3>
+      <ul class="jobs" id="homeJobs"></ul>
+      <p class="more"><a class="btn" href="#jobs" data-route="jobs" data-i18n="allJobs">See all jobs</a></p>
+    </section>
+    <section class="section">
+      <h3 data-i18n="howTitle">How it works</h3>
+      <ol class="steps">
+        <li data-i18n="how1">Search or browse by field, type and location.</li>
+        <li data-i18n="how2">Open a job to read the requirements and the closing date.</li>
+        <li data-i18n="how3">Contact the employer directly with your CV. Never pay to apply.</li>
+      </ol>
+    </section>
+    <section class="cta">
+      <div>
+        <h3 data-i18n="ctaTitle">Hiring?</h3>
+        <p data-i18n="ctaSub">Add your job so people in your area can find it.</p>
+      </div>
+      <button type="button" class="btn" id="ctaPost" data-i18n="postBtn">Post a job</button>
+    </section>
+  </div>
+
+  <div class="view" id="view-tips" hidden>
+    <section class="hero">
+      <h2 data-i18n="tipsTitle">Tips for job seekers</h2>
+      <p data-i18n="tipsSub">Short advice on CVs, fake jobs and interviews.</p>
+    </section>
+    <section class="checkcard" aria-labelledby="checkTitle">
+      <div class="checkcard-head">
+        <h3 id="checkTitle" data-i18n="checkTitle">Before you apply</h3>
+        <button type="button" class="btn quiet" id="checkReset" data-i18n="checkReset">Reset</button>
+      </div>
+      <div class="progress" aria-hidden="true"><span id="checkBar"></span></div>
+      <p class="progress-label" id="checkLabel" aria-live="polite"></p>
+      <ul class="checks" id="checks"></ul>
+    </section>
+    <div class="tips" id="tipsGrid"></div>
+  </div>
+
+  <div class="view" id="view-jobs" hidden>
+  <p class="lede" data-i18n="lede">Jobs, internships and freelance work, all in one place.</p>
+  <div class="notices">
+    <p class="notice alert" data-i18n="scam">Never pay money to get a job. Real employers do not charge to apply.</p>
+    <p class="notice" data-i18n="sampleNote">These are example listings so you can try the page. Real jobs appear once employers post them.</p>
+  </div>
+
+  <div class="layout">
+    <aside class="filters" aria-label="Filters">
+      <h2 data-i18n="filter">Filter</h2>
+      <div class="field">
+        <label for="q" data-i18n="search">Search</label>
+        <input type="text" id="q" autocomplete="off" data-i18n-ph="searchPh" placeholder="Job title or company">
+      </div>
+      <div class="field">
+        <label for="fField" data-i18n="field">Field</label>
+        <select id="fField"></select>
+      </div>
+      <div class="field">
+        <label for="fType" data-i18n="type">Job type</label>
+        <select id="fType"></select>
+      </div>
+      <div class="field">
+        <label for="fPlace" data-i18n="place">Location</label>
+        <select id="fPlace"></select>
+      </div>
+      <div class="field">
+        <label for="fSort" data-i18n="sortBy">Sort by</label>
+        <select id="fSort"></select>
+      </div>
+      <button type="button" class="btn quiet" id="weekOnly" data-flag="week" aria-pressed="false" data-i18n="weekOnly">Closing within 7 days</button>
+      <button type="button" class="btn quiet" id="salaryOnly" data-flag="salary" aria-pressed="false" data-i18n="salaryOnly">Salary stated</button>
+      <button type="button" class="btn quiet" id="savedOnly" aria-pressed="false">Saved jobs (0)</button>
+      <button type="button" class="btn quiet" id="appliedOnly" data-flag="applied" aria-pressed="false">Applied (0)</button>
+      <button type="button" class="btn quiet" id="clear" data-i18n="clear">Clear filters</button>
+    </aside>
+
+    <main>
+      <p class="count" id="count" aria-live="polite"></p>
+      <ul class="jobs" id="jobs"></ul>
+    </main>
+  </div>
+
+  <section class="post" id="post" aria-labelledby="postTitle">
+    <h2 id="postTitle" data-i18n="postBtn">Post a job</h2>
+    <p data-i18n="postIntro">Employers can add a listing here. On the live site, an admin checks each one before it is published.</p>
+    <form id="postForm" class="form" novalidate>
+      <div class="field"><label for="pTitle" data-i18n="fTitle">Job title</label><input type="text" id="pTitle" autocomplete="off"></div>
+      <div class="field"><label for="pOrg" data-i18n="fOrg">Company</label><input type="text" id="pOrg" autocomplete="off"></div>
+      <div class="field"><label for="pPlace" data-i18n="place">Location</label><select id="pPlace"></select></div>
+      <div class="field"><label for="pField" data-i18n="field">Field</label><select id="pField"></select></div>
+      <div class="field"><label for="pType" data-i18n="type">Job type</label><select id="pType"></select></div>
+      <div class="field"><label for="pSalary" data-i18n="fSalary">Salary (optional)</label><input type="text" id="pSalary" autocomplete="off" data-i18n-ph="fSalaryPh" placeholder="ETB 12,000 per month"></div>
+      <div class="field"><label for="pDate" data-i18n="fDate">Last day to apply</label><input type="date" id="pDate"></div>
+      <div class="field"><label for="pContact" data-i18n="fContact">Phone, Telegram or email to apply</label><input type="text" id="pContact" autocomplete="off"></div>
+      <div class="field full"><label for="pDesc" data-i18n="fDesc">Description</label><textarea id="pDesc"></textarea></div>
+      <div class="form-actions full">
+        <button type="submit" class="btn primary" data-i18n="submit">Add to preview</button>
+        <p class="msg" id="msg" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </section>
+  </div>
+
+  <footer class="about" id="about" aria-labelledby="aboutTitle">
+    <div>
+      <h2 id="aboutTitle" data-i18n="aboutTitle">About Sira Bet</h2>
+      <p data-i18n="aboutText">Sira Bet helps people in Ethiopia find jobs, internships and freelance work in Amharic and English, and helps employers reach them. Listings marked Example are samples.</p>
+    </div>
+    <dl>
+      <div><dt data-i18n="aboutPhone">Phone</dt><dd><code>+2519423119107</code><button type="button" class="btn quiet" data-copy="+2519423119107" data-i18n="copy">Copy</button></dd></div>
+      <div><dt data-i18n="aboutEmail">Email</dt><dd><code>tdagim405@gmail.com</code><button type="button" class="btn quiet" data-copy="tdagim405@gmail.com" data-i18n="copy">Copy</button></dd></div>
+      <div><dt data-i18n="aboutPlace">Address</dt><dd><span data-i18n="aboutPlaceVal">Ethiopia, Addis Ababa, Akaki Kality</span></dd></div>
+    </dl>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var FIELDS = {
+    it: { en: "Technology", am: "ቴክኖሎጂ" },
+    finance: { en: "Finance & accounting", am: "ሂሳብ እና ፋይናንስ" },
+    sales: { en: "Sales & marketing", am: "ሽያጭ እና ማርኬቲንግ" },
+    education: { en: "Education", am: "ትምህርት" },
+    health: { en: "Health", am: "ጤና" },
+    admin: { en: "Administration", am: "አስተዳደር" },
+    eng: { en: "Engineering & construction", am: "ምህንድስና እና ግንባታ" },
+    hospitality: { en: "Hotels & restaurants", am: "ሆቴልና ምግብ ቤት" },
+    transport: { en: "Transport & delivery", am: "ትራንስፖርትና ማድረስ" }
+  };
+  var TYPES = {
+    full: { en: "Full-time", am: "ሙሉ ጊዜ" },
+    part: { en: "Part-time", am: "ከፊል ጊዜ" },
+    intern: { en: "Internship", am: "ልምምድ" },
+    freelance: { en: "Freelance", am: "ፍሪላንስ" }
+  };
+  var PLACES = {
+    addis: { en: "Addis Ababa", am: "አዲስ አበባ" },
+    adama: { en: "Adama", am: "አዳማ" },
+    hawassa: { en: "Hawassa", am: "ሐዋሳ" },
+    bahirdar: { en: "Bahir Dar", am: "ባሕር ዳር" },
+    dire: { en: "Dire Dawa", am: "ድሬዳዋ" },
+    remote: { en: "Remote", am: "ከርቀት" },
+    other: { en: "Other", am: "ሌላ" }
+  };
+  var SORTS = {
+    soon: { en: "Closing soonest", am: "በቅርቡ የሚዘጋ መጀመሪያ" },
+    salary: { en: "Highest salary", am: "ከፍተኛ ደመወዝ መጀመሪያ" }
+  };
+  var CHECKS = [
+    { en: "My CV is one or two pages and the spelling is checked.", am: "ሲቪዬ አንድ ወይም ሁለት ገጽ ነው፣ የፊደል ስህተትም ተፈትሿል።" },
+    { en: "My phone number and email are correct and working.", am: "ስልክ ቁጥሬና ኢሜይሌ ትክክል ናቸው፣ ይሠራሉ።" },
+    { en: "I have copies of my ID and certificates ready.", am: "የመታወቂያዬና የምስክር ወረቀቶቼ ቅጂዎች ተዘጋጅተዋል።" },
+    { en: "The employer has an office address and asks for no fee.", am: "አሠሪው የቢሮ አድራሻ አለው፣ ክፍያም አይጠይቅም።" },
+    { en: "My message names the job title I am applying for.", am: "መልዕክቴ የምያመለክትበትን የሥራ ርዕስ ይጠቅሳል።" }
+  ];
+  var UNITS = {
+    month: { en: "per month", am: "በወር" },
+    hour: { en: "per hour", am: "በሰዓት" },
+    project: { en: "per project", am: "በፕሮጀክት" }
+  };
+  var UI = {
+    postBtn: { en: "Post a job", am: "ሥራ ይለጥፉ" },
+    navHome: { en: "Home", am: "መነሻ" },
+    navJobs: { en: "Jobs", am: "ሥራዎች" },
+    navTips: { en: "Tips", am: "ምክር" },
+    galTitle: { en: "Work all around you", am: "በዙሪያዎ ያሉ ሥራዎች" },
+    gal1: { en: "Find work that fits you", am: "የሚስማማዎትን ሥራ ያግኙ" },
+    gal2: { en: "Meet employers", am: "አሠሪዎችን ይተዋወቁ" },
+    gal3: { en: "Teach and learn", am: "ያስተምሩ እና ይማሩ" },
+    gal4: { en: "Care and health jobs", am: "የጤና እና እንክብካቤ ሥራዎች" },
+    aboutTitle: { en: "About Sira Bet", am: "ስለ ሥራ ቤት" },
+    aboutText: { en: "Sira Bet helps people in Ethiopia find jobs, internships and freelance work in Amharic and English, and helps employers reach them. Listings marked Example are samples.", am: "ሥራ ቤት በኢትዮጵያ ያሉ ሰዎች ሥራ፣ ልምምድና ፍሪላንስ ዕድሎችን በአማርኛና በእንግሊዝኛ እንዲያገኙ፣ አሠሪዎችም እነሱን እንዲደርሱ ይረዳል። «ምሳሌ» የተባሉ ማስታወቂያዎች ናሙናዎች ናቸው።" },
+    aboutPhone: { en: "Phone", am: "ስልክ" },
+    aboutEmail: { en: "Email", am: "ኢሜይል" },
+    aboutPlace: { en: "Address", am: "አድራሻ" },
+    aboutPlaceVal: { en: "Ethiopia, Addis Ababa, Akaki Kality", am: "ኢትዮጵያ፣ አዲስ አበባ፣ አቃቂ ቃሊቲ" },
+    sortBy: { en: "Sort by", am: "አደራደር" },
+    weekOnly: { en: "Closing within 7 days", am: "በ7 ቀን ውስጥ የሚዘጉ" },
+    salaryOnly: { en: "Salary stated", am: "ደመወዝ የተገለጸ" },
+    appliedJobs: { en: "Applied", am: "ያመለከትኩባቸው" },
+    markApplied: { en: "Mark applied", am: "አመልክቻለሁ" },
+    applied: { en: "Applied", am: "አመልክተዋል" },
+    telegram: { en: "Telegram", am: "ቴሌግራም" },
+    checkTitle: { en: "Before you apply", am: "ከማመልከትዎ በፊት" },
+    checkReset: { en: "Reset", am: "እንደገና ጀምር" },
+    save: { en: "Save", am: "አስቀምጥ" },
+    saved: { en: "Saved", am: "ተቀምጧል" },
+    savedJobs: { en: "Saved jobs", am: "የተቀመጡ ሥራዎች" },
+    share: { en: "Share", am: "አጋራ" },
+    darkMode: { en: "Dark mode", am: "ጨለማ ገጽታ" },
+    lightMode: { en: "Light mode", am: "ብርሃን ገጽታ" },
+    homeTitle: { en: "Find your next job near you", am: "ቀጣይ ሥራዎን በአቅራቢያዎ ያግኙ" },
+    homeSub: { en: "Search jobs, internships and freelance work in Amharic or English.", am: "ሥራዎችን፣ ልምምዶችንና ፍሪላንስ ዕድሎችን በአማርኛ ወይም በእንግሊዝኛ ይፈልጉ።" },
+    searchBtn: { en: "Search jobs", am: "ሥራ ፈልግ" },
+    browse: { en: "Browse by field", am: "በሙያ ይመልከቱ" },
+    closingSoon: { en: "Closing soon", am: "በቅርቡ የሚዘጉ" },
+    allJobs: { en: "See all jobs", am: "ሁሉንም ሥራዎች ይመልከቱ" },
+    howTitle: { en: "How it works", am: "እንዴት ይሠራል" },
+    how1: { en: "Search or browse by field, type and location.", am: "በሙያ፣ በዓይነትና በቦታ ይፈልጉ ወይም ያስሱ።" },
+    how2: { en: "Open a job to read the requirements and the closing date.", am: "መስፈርቶቹንና የመዝጊያ ቀኑን ለማንበብ ሥራውን ይክፈቱ።" },
+    how3: { en: "Contact the employer directly with your CV. Never pay to apply.", am: "ከሲቪዎ ጋር አሠሪውን በቀጥታ ያግኙ። ለማመልከት ፈጽሞ አይክፈሉ።" },
+    ctaTitle: { en: "Hiring?", am: "ሠራተኛ ይፈልጋሉ?" },
+    ctaSub: { en: "Add your job so people in your area can find it.", am: "ሥራዎን ያስገቡ፣ በአካባቢዎ ያሉ ሰዎች እንዲያገኙት።" },
+    tipsTitle: { en: "Tips for job seekers", am: "ለሥራ ፈላጊዎች ምክር" },
+    tipsSub: { en: "Short advice on CVs, fake jobs and interviews.", am: "ስለ ሲቪ፣ ስለ ሐሰተኛ ሥራዎችና ስለ ቃለ መጠይቅ አጫጭር ምክሮች።" },
+    lede: { en: "Jobs, internships and freelance work, all in one place.", am: "ሥራ፣ ልምምድ እና ፍሪላንስ ዕድሎች በአንድ ቦታ።" },
+    scam: { en: "Never pay money to get a job. Real employers do not charge to apply.", am: "ሥራ ለማግኘት ገንዘብ አይክፈሉ። እውነተኛ አሠሪዎች ለማመልከት ክፍያ አይጠይቁም።" },
+    sampleNote: { en: "These are example listings so you can try the page. Real jobs appear once employers post them.", am: "እነዚህ ገጹን ለመሞከር የተዘጋጁ ምሳሌ ማስታወቂያዎች ናቸው። አሠሪዎች ሲለጥፉ እውነተኛ ሥራዎች ይታያሉ።" },
+    filter: { en: "Filter", am: "አጣራ" },
+    search: { en: "Search", am: "ፍለጋ" },
+    searchPh: { en: "Job title or company", am: "የሥራ ርዕስ ወይም ድርጅት" },
+    field: { en: "Field", am: "ሙያ" },
+    type: { en: "Job type", am: "የሥራ ዓይነት" },
+    place: { en: "Location", am: "ቦታ" },
+    all: { en: "All", am: "ሁሉም" },
+    clear: { en: "Clear filters", am: "ማጣሪያ አጽዳ" },
+    postIntro: { en: "Employers can add a listing here. On the live site, an admin checks each one before it is published.", am: "አሠሪዎች እዚህ ማስታወቂያ ማስገባት ይችላሉ። በቀጥታ ድረ-ገጽ ላይ አስተዳዳሪ እያንዳንዱን ከመታተሙ በፊት ይፈትሻል።" },
+    fTitle: { en: "Job title", am: "የሥራ ርዕስ" },
+    fOrg: { en: "Company", am: "ድርጅት" },
+    fSalary: { en: "Salary (optional)", am: "ደመወዝ (አማራጭ)" },
+    fSalaryPh: { en: "ETB 12,000 per month", am: "ብር 12,000 በወር" },
+    fDate: { en: "Last day to apply", am: "የማመልከቻ የመጨረሻ ቀን" },
+    fContact: { en: "Phone, Telegram or email to apply", am: "ለማመልከት ስልክ፣ ቴሌግራም ወይም ኢሜይል" },
+    fDesc: { en: "Description", am: "መግለጫ" },
+    submit: { en: "Add to preview", am: "ወደ ቅድመ እይታ ጨምር" },
+    details: { en: "Details", am: "ዝርዝር" },
+    hide: { en: "Hide details", am: "ዝርዝር ደብቅ" },
+    about: { en: "About the job", am: "ስለ ሥራው" },
+    reqs: { en: "Requirements", am: "የሚያስፈልጉ ብቃቶች" },
+    apply: { en: "How to apply", am: "እንዴት ማመልከት" },
+    applyHint: { en: "Contact the employer directly and send your CV.", am: "አሠሪውን በቀጥታ ያግኙ እና ሲቪዎን ይላኩ።" },
+    copy: { en: "Copy", am: "ቅዳ" },
+    copied: { en: "Copied", am: "ተቀድቷል" },
+    example: { en: "Example", am: "ምሳሌ" },
+    pending: { en: "Awaiting check", am: "ምርመራ ይጠብቃል" },
+    noSalary: { en: "Salary not stated", am: "ደመወዝ አልተገለጸም" },
+    empty: { en: "No jobs match. Try clearing a filter.", am: "ምንም ሥራ አልተገኘም። ማጣሪያ ያጽዱ።" },
+    needFields: { en: "Fill in the job title, company and how to apply.", am: "የሥራ ርዕስ፣ ድርጅት እና ለማመልከት የመገናኛ መረጃ ይሙሉ።" },
+    posted: { en: "Added at the top of the list. This preview is not saved, and a live site would send it to an admin first.", am: "ከዝርዝሩ አናት ላይ ተጨምሯል። ይህ ቅድመ እይታ አይቀመጥም፣ በቀጥታ ድረ-ገጽ ግን መጀመሪያ ወደ አስተዳዳሪ ይላካል።" }
+  };
+
+  var JOBS = [
+    { id: "j1", example: true, title: { en: "Junior Web Developer", am: "ጀማሪ ዌብ ገንቢ" }, org: { en: "Zemen Soft", am: "ዘመን ሶፍት" }, place: "addis", field: "it", type: "full",
+      salary: { min: 18000, max: 25000, unit: "month" }, days: 6,
+      desc: { en: "Build and maintain websites for local clients using HTML, CSS and JavaScript. You will work with a small team and learn on the job.", am: "ለአገር ውስጥ ደንበኞች HTML፣ CSS እና JavaScript በመጠቀም ድረ-ገጾችን ይገነባሉ እና ያስተዳድራሉ። ከትንሽ ቡድን ጋር ይሰራሉ፣ በሥራ ላይ ይማራሉ።" },
+      reqs: { en: ["Diploma or degree in computer science or a related field", "Basic HTML, CSS and JavaScript", "A portfolio of at least two small projects"], am: ["በኮምፒውተር ሳይንስ ወይም ተዛማጅ መስክ ዲፕሎማ ወይም ዲግሪ", "መሠረታዊ HTML፣ CSS እና JavaScript እውቀት", "ቢያንስ ሁለት ትናንሽ ፕሮጀክቶች ያሉት ፖርትፎሊዮ"] },
+      contact: "jobs@zemensoft.example" },
+    { id: "j2", example: true, title: { en: "Accountant", am: "የሂሳብ ሠራተኛ" }, org: { en: "Abay Trading", am: "አባይ ንግድ" }, place: "addis", field: "finance", type: "full",
+      salary: { min: 15000, max: 20000, unit: "month" }, days: 3,
+      desc: { en: "Keep the daily books, prepare monthly reports and handle VAT filing for a growing import business.", am: "ለሚያድግ የማስመጣት ንግድ የዕለት መዝገቦችን ይይዛሉ፣ ወርሃዊ ሪፖርቶችን ያዘጋጃሉ እና የተጨማሪ እሴት ታክስ ሰነዶችን ያስተናግዳሉ።" },
+      reqs: { en: ["Degree in accounting", "2 years of experience", "Knowledge of Peachtree or QuickBooks"], am: ["በሂሳብ አያያዝ ዲግሪ", "የ2 ዓመት የሥራ ልምድ", "የፒችትሪ ወይም ኩዊክቡክስ እውቀት"] },
+      contact: "+251 911 000 001" },
+    { id: "j3", example: true, title: { en: "Sales Associate", am: "የሽያጭ ባልደረባ" }, org: { en: "Selam Supermarket", am: "ሰላም ሱፐርማርኬት" }, place: "adama", field: "sales", type: "part",
+      salary: { min: 4500, max: 6000, unit: "month" }, days: 10,
+      desc: { en: "Help customers on the shop floor, restock shelves and run the till on afternoon shifts.", am: "ደንበኞችን ያስተናግዳሉ፣ መደርደሪያዎችን ይሞላሉ እና በከሰዓት ፈረቃ ገንዘብ ተቀባይ ሆነው ይሰራሉ።" },
+      reqs: { en: ["Grade 10 completed or higher", "Friendly and reliable", "Available in the afternoons"], am: ["10ኛ ክፍል ወይም ከዚያ በላይ", "ተግባቢና ታማኝ", "ከሰዓት በኋላ መሥራት የሚችሉ"] },
+      contact: "+251 911 000 002" },
+    { id: "j4", example: true, title: { en: "Mathematics Tutor", am: "የሒሳብ አስተማሪ" }, org: { en: "Bright Minds Tutoring", am: "ብሩህ አእምሮ ማስተማሪያ" }, place: "remote", field: "education", type: "freelance",
+      salary: { min: 250, max: 350, unit: "hour" }, days: 14,
+      desc: { en: "Teach grade 9 to 12 students online in small groups, three evenings a week.", am: "ከ9ኛ እስከ 12ኛ ክፍል ተማሪዎችን በኦንላይን በትንሽ ቡድን፣ በሳምንት ሦስት ምሽት ያስተምራሉ።" },
+      reqs: { en: ["Degree in mathematics or engineering", "Explains clearly in Amharic and English", "Stable internet connection"], am: ["በሒሳብ ወይም በምህንድስና ዲግሪ", "በአማርኛና በእንግሊዝኛ በግልጽ ማስረዳት", "የተረጋጋ የኢንተርኔት ግንኙነት"] },
+      contact: "t.me/brightminds_example" },
+    { id: "j5", example: true, title: { en: "Nursing Intern", am: "የነርስ ተለማማጅ" }, org: { en: "Kidus Clinic", am: "ቅዱስ ክሊኒክ" }, place: "hawassa", field: "health", type: "intern",
+      salary: null, days: 1,
+      desc: { en: "A three-month placement supporting nurses in outpatient and maternal care.", am: "በተመላላሽ እና በእናቶች ክብካቤ ክፍሎች ነርሶችን የሚረዳ የሦስት ወር ልምምድ።" },
+      reqs: { en: ["Final-year nursing student or recent graduate", "Letter from your college", "Willing to work shifts"], am: ["የመጨረሻ ዓመት የነርሲንግ ተማሪ ወይም በቅርቡ የተመረቀ", "ከኮሌጅዎ የድጋፍ ደብዳቤ", "በፈረቃ መሥራት የሚችል"] },
+      contact: "hr@kidusclinic.example" },
+    { id: "j6", example: true, title: { en: "Graphic Designer", am: "ግራፊክ ዲዛይነር" }, org: { en: "Lalibela Print", am: "ላሊበላ ማተሚያ" }, place: "remote", field: "sales", type: "freelance",
+      salary: { min: 1500, max: 3000, unit: "project" }, days: 0,
+      desc: { en: "Design flyers, menus and social media posts for small businesses. Paid per project.", am: "ለአነስተኛ ንግዶች በራሪ ወረቀቶችን፣ ምናሌዎችን እና የማኅበራዊ ሚዲያ ምስሎችን ይቀርጻሉ። በፕሮጀክት ይከፈላል።" },
+      reqs: { en: ["Portfolio with 3 or more designs", "Figma, Photoshop or Canva", "Delivers on time"], am: ["ከ3 በላይ ዲዛይኖች ያሉት ፖርትፎሊዮ", "Figma፣ Photoshop ወይም Canva ችሎታ", "በሰዓቱ ማድረስ"] },
+      contact: "+251 911 000 003" },
+    { id: "j7", example: true, title: { en: "Office Administrator", am: "የቢሮ አስተዳዳሪ" }, org: { en: "Wegagen Logistics", am: "ወጋገን ሎጂስቲክስ" }, place: "addis", field: "admin", type: "full",
+      salary: { min: 12000, max: 16000, unit: "month" }, days: 21,
+      desc: { en: "Manage reception, schedules, filing and supplier calls for a 20-person office.", am: "ለ20 ሰዎች ቢሮ መቀበያ፣ የጊዜ ሰሌዳ፣ ሰነድ አያያዝ እና ከአቅራቢዎች ጋር የስልክ ግንኙነት ያስተዳድራሉ።" },
+      reqs: { en: ["Diploma in management or secretarial science", "Good Microsoft Office skills", "Fluent Amharic and English"], am: ["በማኔጅመንት ወይም በጸሐፊነት ዲፕሎማ", "ጥሩ የማይክሮሶፍት ኦፊስ ችሎታ", "አማርኛና እንግሊዝኛ አቀላጥፎ መናገር"] },
+      contact: "hr@wegagen-logistics.example" },
+    { id: "j8", example: true, title: { en: "Hotel Receptionist", am: "የሆቴል መቀበያ ሠራተኛ" }, org: { en: "Abol Guest House", am: "አቦል የእንግዳ ማረፊያ" }, place: "addis", field: "hospitality", type: "full",
+      salary: { min: 8000, max: 11000, unit: "month" }, days: 5,
+      desc: { en: "Welcome guests, manage bookings and answer phone calls at a busy 30-room guest house. Shifts include weekends.", am: "በ30 ክፍሎች ባለው የእንግዳ ማረፊያ እንግዶችን ይቀበላሉ፣ የቦታ ማስያዣዎችን ያስተዳድራሉ እና ስልክ ይመልሳሉ። ፈረቃው ቅዳሜና እሁድን ያካትታል።" },
+      reqs: { en: ["Diploma in hotel management or similar", "Good spoken English and Amharic", "Polite and calm with guests"], am: ["በሆቴል ማኔጅመንት ወይም ተመሳሳይ መስክ ዲፕሎማ", "ጥሩ የእንግሊዝኛና የአማርኛ ንግግር", "ለእንግዶች ትሁትና የተረጋጋ"] },
+      contact: "+251 911 000 004" },
+    { id: "j9", example: true, title: { en: "Site Civil Engineer", am: "የሳይት ሲቪል መሐንዲስ" }, org: { en: "Nile Build", am: "ዓባይ ግንባታ" }, place: "bahirdar", field: "eng", type: "full",
+      salary: { min: 28000, max: 38000, unit: "month" }, days: 12,
+      desc: { en: "Supervise road and drainage works on site, check quality and report weekly to the project manager.", am: "በሳይት የመንገድና የፍሳሽ ሥራዎችን ይቆጣጠራሉ፣ ጥራትን ይፈትሻሉ እና በየሳምንቱ ለፕሮጀክት ሥራ አስኪያጁ ሪፖርት ያቀርባሉ።" },
+      reqs: { en: ["BSc in civil engineering", "3 years of site experience", "Can read drawings and use AutoCAD"], am: ["በሲቪል ምህንድስና ዲግሪ", "የ3 ዓመት የሳይት ልምድ", "ንድፎችን ማንበብና AutoCAD መጠቀም የሚችል"] },
+      contact: "hr@nilebuild.example" },
+    { id: "j10", example: true, title: { en: "Delivery Rider", am: "የዕቃ ማድረስ ሞተረኛ" }, org: { en: "Fast Lane Delivery", am: "ፈጣን መንገድ ማድረስ" }, place: "addis", field: "transport", type: "part",
+      salary: { min: 6000, max: 9000, unit: "month" }, days: 8,
+      desc: { en: "Deliver parcels and food orders across Addis Ababa during the evening peak. A fuel allowance is paid.", am: "በአዲስ አበባ በማታ ሰዓት የእሽጎችንና የምግብ ትዕዛዞችን ያደርሳሉ። የነዳጅ አበል ይከፈላል።" },
+      reqs: { en: ["Valid motorbike driving licence", "Knows Addis Ababa roads well", "Own smartphone"], am: ["የሚሠራ የሞተር ብስክሌት መንጃ ፈቃድ", "የአዲስ አበባን መንገዶች በደንብ የሚያውቅ", "የራሱ ስማርት ስልክ"] },
+      contact: "t.me/fastlane_example" },
+    { id: "j11", example: true, title: { en: "Amharic Content Writer", am: "የአማርኛ ይዘት ጸሐፊ" }, org: { en: "Tsehay Media", am: "ጸሐይ ሚዲያ" }, place: "remote", field: "sales", type: "freelance",
+      salary: { min: 800, max: 1500, unit: "project" }, days: 18,
+      desc: { en: "Write short articles and social media posts in clear Amharic for local brands. Paid per project.", am: "ለአገር ውስጥ ብራንዶች አጫጭር ጽሑፎችንና የማኅበራዊ ሚዲያ ልጥፎችን በግልጽ አማርኛ ይጽፋሉ። በፕሮጀክት ይከፈላል።" },
+      reqs: { en: ["Strong Amharic writing and 2 sample pieces", "Basic knowledge of Facebook and Telegram", "Meets deadlines"], am: ["ጠንካራ የአማርኛ አጻጻፍና 2 የሥራ ናሙናዎች", "የፌስቡክና የቴሌግራም መሠረታዊ እውቀት", "የጊዜ ገደብን ማክበር"] },
+      contact: "hello@tsehaymedia.example" },
+    { id: "j12", example: true, title: { en: "Pharmacy Assistant", am: "የፋርማሲ ረዳት" }, org: { en: "Hiwot Pharmacy", am: "ሕይወት ፋርማሲ" }, place: "dire", field: "health", type: "full",
+      salary: { min: 7000, max: 9000, unit: "month" }, days: 4,
+      desc: { en: "Help the pharmacist with stock, labelling and serving customers. Training is given on the job.", am: "ፋርማሲስቱን በክምችት፣ በመለያ ምልክት ማድረግና ደንበኞችን በማስተናገድ ይረዳሉ። በሥራ ላይ ሥልጠና ይሰጣል።" },
+      reqs: { en: ["Diploma in pharmacy or health sciences", "Careful with numbers and labels", "Friendly with customers"], am: ["በፋርማሲ ወይም በጤና ሳይንስ ዲፕሎማ", "በቁጥሮችና በመለያዎች ጥንቃቄ የሚያደርግ", "ከደንበኞች ጋር ተግባቢ"] },
+      contact: "+251 911 000 005" },
+    { id: "j13", example: true, title: { en: "Primary School Teacher", am: "የአንደኛ ደረጃ ት/ቤት መምህር" }, org: { en: "Bright Future School", am: "ብሩህ ነገ ትምህርት ቤት" }, place: "hawassa", field: "education", type: "full",
+      salary: { min: 9000, max: 13000, unit: "month" }, days: 15,
+      desc: { en: "Teach grades 1 to 4 in Amharic and English, prepare lessons and meet parents each term.", am: "ከ1ኛ እስከ 4ኛ ክፍል በአማርኛና በእንግሊዝኛ ያስተምራሉ፣ ትምህርት ያዘጋጃሉ እና በየተርሙ ከወላጆች ጋር ይገናኛሉ።" },
+      reqs: { en: ["Diploma or degree in teaching", "Patient and caring with children", "Clear handwriting and good English"], am: ["በማስተማር ዲፕሎማ ወይም ዲግሪ", "ከልጆች ጋር ትዕግሥተኛና ተንከባካቢ", "ንጹሕ የእጅ ጽሑፍና ጥሩ እንግሊዝኛ"] },
+      contact: "hr@brightfuture.example" },
+    { id: "j14", example: true, title: { en: "Data Entry Clerk", am: "የመረጃ መመዝገቢያ ሠራተኛ" }, org: { en: "Rift Valley Cooperative", am: "ሪፍት ቫሊ ኅብረት ሥራ" }, place: "adama", field: "admin", type: "part",
+      salary: { min: 5000, max: 7000, unit: "month" }, days: 9,
+      desc: { en: "Enter member records and receipts into Excel and check them for mistakes. Mornings only.", am: "የአባላት መዝገቦችንና ደረሰኞችን በኤክሴል ያስገባሉ እና ስህተት ካለ ይፈትሻሉ። ጠዋት ብቻ።" },
+      reqs: { en: ["Grade 12 completed or a diploma", "Fast and accurate typing", "Basic Excel"], am: ["12ኛ ክፍል ወይም ዲፕሎማ", "ፈጣንና ትክክለኛ ትየባ", "መሠረታዊ ኤክሴል"] },
+      contact: "+251 911 000 006" },
+    { id: "j15", example: true, title: { en: "Waiter or Waitress", am: "አስተናጋጅ" }, org: { en: "Enat Café", am: "እናት ካፌ" }, place: "addis", field: "hospitality", type: "full",
+      salary: { min: 5000, max: 7500, unit: "month" }, days: 2,
+      desc: { en: "Serve tables, take orders and keep the dining area clean in a busy city café. Tips are shared.", am: "በተጨናነቀ የከተማ ካፌ ውስጥ ጠረጴዛዎችን ያስተናግዳሉ፣ ትዕዛዝ ይቀበላሉ እና የመመገቢያ ቦታን ንጹሕ ያደርጋሉ። ጉርሻ በጋራ ይከፋፈላል።" },
+      reqs: { en: ["Grade 10 completed or higher", "Neat and on time", "Previous café experience is a plus"], am: ["10ኛ ክፍል ወይም ከዚያ በላይ", "ንጹሕና በሰዓት የሚደርስ", "የካፌ ልምድ ካለ ጥቅም ነው"] },
+      contact: "+251 911 000 007" }
+  ];
+
+  var TIPS = [
+    { title: { en: "Write a CV employers read", am: "አሠሪዎች የሚያነቡት ሲቪ ይጻፉ" },
+      items: {
+        en: ["Keep it to one or two pages.", "Put your most recent job or study first.", "Write what you did and the result, for example: served 40 customers a day.", "Add a working phone number and a professional-looking email.", "Ask someone to check the spelling before you send it."],
+        am: ["ከአንድ እስከ ሁለት ገጽ ብቻ ያድርጉት።", "የቅርብ ጊዜ ሥራዎን ወይም ትምህርትዎን መጀመሪያ ያስቀምጡ።", "ምን እንደሠሩና ውጤቱ ምን እንደነበር ይጻፉ፣ ለምሳሌ በቀን 40 ደንበኞችን አስተናግጃለሁ።", "የሚሠራ ስልክ ቁጥርና ሙያዊ የሚመስል ኢሜይል ያስገቡ።", "ከመላክዎ በፊት ሌላ ሰው የፊደል ስህተት እንዲያይልዎ ያድርጉ።"] } },
+    { flag: true, title: { en: "Signs of a fake job", am: "የሐሰት ሥራ ምልክቶች" },
+      items: {
+        en: ["It asks you to pay a fee for training, a uniform or a medical test.", "The pay is far higher than similar jobs for very little work.", "The employer only uses a personal Telegram or WhatsApp account and has no office address.", "It asks for your ID, bank details or passport before any interview.", "You are told to decide today or lose the job."],
+        am: ["ለሥልጠና፣ ለዩኒፎርም ወይም ለሕክምና ምርመራ ክፍያ ይጠይቃል።", "ለትንሽ ሥራ ከተመሳሳይ ሥራዎች እጅግ የላቀ ደመወዝ ቃል ይገባል።", "አሠሪው የግል ቴሌግራም ወይም ዋትስአፕ ብቻ ይጠቀማል፣ የቢሮ አድራሻ የለውም።", "ከቃለ መጠይቅ በፊት መታወቂያ፣ የባንክ መረጃ ወይም ፓስፖርት ይጠይቃል።", "ዛሬ ካልወሰኑ ሥራው ያልፋል ይላል።"] } },
+    { title: { en: "Prepare for the interview", am: "ለቃለ መጠይቅ ይዘጋጁ" },
+      items: {
+        en: ["Learn what the company does before you go.", "Practise a 30-second answer to: tell me about yourself.", "Bring copies of your CV and certificates.", "Plan your route and arrive 15 minutes early.", "Prepare one or two questions to ask them."],
+        am: ["ከመሄድዎ በፊት ድርጅቱ ምን እንደሚሠራ ይወቁ።", "ስለ ራስዎ ተናገሩ ለሚለው ጥያቄ የ30 ሰከንድ መልስ ይለማመዱ።", "የሲቪዎንና የምስክር ወረቀቶችዎን ቅጂ ይያዙ።", "መንገድዎን አስቀድመው ያቅዱ እና 15 ደቂቃ ቀድመው ይድረሱ።", "አንድ ወይም ሁለት ጥያቄዎች ለመጠየቅ ያዘጋጁ።"] } },
+    { title: { en: "Apply the smart way", am: "በብልሃት ያመልክቱ" },
+      items: {
+        en: ["Apply before the closing date, ideally in the first few days.", "Send a short message that names the job title.", "Use a clear file name such as Firstname-Lastname-CV.", "Keep a list of where you applied and when.", "Follow up once after one week."],
+        am: ["ከመዝጊያ ቀን በፊት፣ በተቻለ መጠን በመጀመሪያዎቹ ቀናት ያመልክቱ።", "የሥራውን ርዕስ የሚጠቅስ አጭር መልዕክት ይላኩ።", "ግልጽ የፋይል ስም ይጠቀሙ፣ ለምሳሌ ስም-የአባት-ስም-CV።", "የት እና መቼ እንዳመለከቱ ዝርዝር ይያዙ።", "ከአንድ ሳምንት በኋላ አንድ ጊዜ ይከታተሉ።"] } },
+    { title: { en: "Talk about salary", am: "ስለ ደመወዝ ይነጋገሩ" },
+      items: {
+        en: ["Look up typical pay for the same job before the interview.", "Say a range, not one number, and explain why.", "Ask what is included: transport, lunch, overtime and leave.", "Get the agreed pay and start date in writing.", "Be careful if the offer changes after you start."],
+        am: ["ከቃለ መጠይቁ በፊት ለተመሳሳይ ሥራ የተለመደውን ደመወዝ ይወቁ።", "አንድ ቁጥር ሳይሆን ክልል ይናገሩ፣ ምክንያቱንም ያብራሩ።", "ምን እንደሚካተት ይጠይቁ፡ መጓጓዣ፣ ምሳ፣ የትርፍ ሰዓት እና ፈቃድ።", "የተስማማችሁበትን ደመወዝና የሥራ መጀመሪያ ቀን በጽሑፍ ያግኙ።", "ከጀመሩ በኋላ ቅናሹ ቢቀየር ይጠንቀቁ።"] } },
+    { title: { en: "Freelance basics", am: "የፍሪላንስ መሠረታዊ ነገሮች" },
+      items: {
+        en: ["Agree on the price, deadline and number of changes before you start.", "Ask for part of the payment first on bigger projects.", "Keep samples of finished work to show new clients.", "Use mobile money or bank transfer and keep the receipts.", "Save part of each payment for quiet months."],
+        am: ["ከመጀመርዎ በፊት ዋጋውን፣ የማድረሻ ቀኑንና የማስተካከያ ብዛቱን ይስማሙ።", "ለትልልቅ ፕሮጀክቶች የክፍያውን የተወሰነ ክፍል አስቀድመው ይጠይቁ።", "ለአዳዲስ ደንበኞች ለማሳየት የጨረሱትን ሥራ ናሙና ያስቀምጡ።", "በሞባይል ገንዘብ ወይም በባንክ ዝውውር ይቀበሉ፣ ደረሰኞቹንም ያስቀምጡ።", "ለቀዝቃዛ ወራት ከእያንዳንዱ ክፍያ የተወሰነውን ይቆጥቡ።"] } },
+    { title: { en: "Your first week at work", am: "በሥራ የመጀመሪያ ሳምንትዎ" },
+      items: {
+        en: ["Arrive early and learn everyone's name.", "Ask what a good first month looks like.", "Write down instructions so you do not need to ask twice.", "Say so honestly when you do not know something.", "Thank the person who helped you get the job."],
+        am: ["ቀድመው ይድረሱ እና የሁሉንም ሰው ስም ይወቁ።", "ጥሩ የመጀመሪያ ወር ምን እንደሚመስል ይጠይቁ።", "ሁለት ጊዜ እንዳይጠይቁ መመሪያዎችን ይጻፉ።", "የማያውቁት ነገር ሲኖር በቅንነት ይናገሩ።", "ሥራውን እንዲያገኙ የረዳዎትን ሰው ያመስግኑ።"] } },
+    { flag: true, title: { en: "Protect your information", am: "መረጃዎን ይጠብቁ" },
+      items: {
+        en: ["Share your CV only with employers you have checked.", "Never send a photo of your ID in the first message.", "Use a separate email address for job applications.", "Search the company name with the word scam before you reply.", "Tell a friend or family member where you are going for an interview."],
+        am: ["ሲቪዎን ላረጋገጡት አሠሪዎች ብቻ ያካፍሉ።", "በመጀመሪያው መልዕክት የመታወቂያዎን ፎቶ አይላኩ።", "ለሥራ ማመልከቻ የተለየ ኢሜይል ይጠቀሙ።", "ከመመለስዎ በፊት የድርጅቱን ስም ከ scam ቃል ጋር ይፈልጉ።", "ለቃለ መጠይቅ ወዴት እንደሚሄዱ ለጓደኛ ወይም ለቤተሰብ ይንገሩ።"] } }
+  ];
+
+  var lang = "en";
+  try { var saved = localStorage.getItem("sira-lang"); if (saved === "am" || saved === "en") lang = saved; } catch (e) {}
+  var state = { q: "", field: "", type: "", place: "", saved: false, week: false, salary: false, applied: false, sort: "soon" };
+  var open = {};
+  var saved = {};
+  var applied = {};
+  var checked = {};
+  function loadSet(key, target) {
+    try { JSON.parse(localStorage.getItem(key) || "[]").forEach(function (id) { target[id] = true; }); } catch (e) {}
+  }
+  function saveSet(key, source) {
+    try { localStorage.setItem(key, JSON.stringify(Object.keys(source).filter(function (k) { return source[k]; }))); } catch (e) {}
+  }
+  loadSet("sira-saved", saved); loadSet("sira-applied", applied); loadSet("sira-check", checked);
+  function persistSaved() { saveSet("sira-saved", saved); }
+
+  function monthly(s) {
+    if (!s) return -1;
+    if (typeof s === "string") { var m = s.replace(/,/g, "").match(/\d+/); return m ? Number(m[0]) : 0; }
+    return s.unit === "hour" ? s.max * 160 : s.max;
+  }
+  function shareText(j) {
+    var dl = deadline(j.days), sal = salaryText(j.salary);
+    var parts = [j.title[lang] + " | " + j.org[lang] + ", " + PLACES[j.place][lang]];
+    if (sal) parts.push(sal);
+    if (dl) parts.push(dl.text);
+    parts.push(t("apply") + ": " + j.contact);
+    return parts.join("\n");
+  }
+  function telegramHref(j) {
+    var page = "";
+    try { page = location.href.split("#")[0]; } catch (e) {}
+    return "https://t.me/share/url?url=" + encodeURIComponent(page || "https://claude.ai") + "&text=" + encodeURIComponent(shareText(j));
+  }
+
+  function effectiveTheme() {
+    var a = document.documentElement.getAttribute("data-theme");
+    if (a === "dark" || a === "light") return a;
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  function applyThemeLabel() {
+    $("themeBtn").textContent = effectiveTheme() === "dark" ? t("lightMode") : t("darkMode");
+  }
+
+  function shareJob(btn) {
+    var j = JOBS.filter(function (x) { return x.id === btn.getAttribute("data-share"); })[0];
+    if (!j) return;
+    var text = shareText(j);
+    var done = function () { btn.textContent = t("copied"); setTimeout(function () { btn.textContent = t("share"); }, 1500); };
+    var fallback = function () {
+      var host = btn.parentNode.parentNode;
+      var box = host.querySelector(".sharebox");
+      if (!box) { box = document.createElement("textarea"); box.className = "sharebox"; box.readOnly = true; host.appendChild(box); }
+      box.value = text; box.rows = 4; box.select();
+    };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (err) { fallback(); }
+  }
+
+  function $(id) { return document.getElementById(id); }
+  function t(key) { return UI[key][lang]; }
+  function other() { return lang === "en" ? "am" : "en"; }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function num(n) { return Number(n).toLocaleString("en-US"); }
+
+  function fillSelect(sel, dict, withAll) {
+    var cur = sel.value;
+    var html = withAll ? '<option value="">' + esc(t("all")) + "</option>" : "";
+    Object.keys(dict).forEach(function (k) { html += '<option value="' + k + '">' + esc(dict[k][lang]) + "</option>"; });
+    sel.innerHTML = html;
+    if (cur && dict[cur]) sel.value = cur;
+  }
+
+  function salaryText(s) {
+    if (!s) return null;
+    if (typeof s === "string") return s;
+    var range = s.min === s.max ? num(s.min) : num(s.min) + " – " + num(s.max);
+    return lang === "am" ? "ብር " + range + " " + UNITS[s.unit].am : "ETB " + range + " " + UNITS[s.unit].en;
+  }
+
+  function deadline(days) {
+    if (days === null || days === undefined) return null;
+    if (days < 0) return { text: lang === "am" ? "ተዘግቷል" : "Closed", warn: false };
+    if (days === 0) return { text: lang === "am" ? "ዛሬ ይዘጋል" : "Closes today", warn: true };
+    if (days === 1) return { text: lang === "am" ? "ነገ ይዘጋል" : "Closes tomorrow", warn: true };
+    return { text: lang === "am" ? "ለማመልከት " + days + " ቀን ይቀራል" : "Closes in " + days + " days", warn: days <= 3 };
+  }
+
+  function sortKey(j) {
+    if (j.fresh) return -1;
+    if (j.days === null || j.days === undefined) return 9000;
+    if (j.days < 0) return 10000 - j.days;
+    return j.days;
+  }
+
+  function matches(j) {
+    if (state.field && j.field !== state.field) return false;
+    if (state.type && j.type !== state.type) return false;
+    if (state.place && j.place !== state.place) return false;
+    if (state.saved && !saved[j.id]) return false;
+    if (state.applied && !applied[j.id]) return false;
+    if (state.salary && !j.salary) return false;
+    if (state.week && !(j.days !== null && j.days !== undefined && j.days >= 0 && j.days <= 7)) return false;
+    if (state.q) {
+      var hay = (j.title.en + " " + j.title.am + " " + j.org.en + " " + j.org.am).toLowerCase();
+      if (hay.indexOf(state.q.toLowerCase()) === -1) return false;
+    }
+    return true;
+  }
+
+  function card(j, p) {
+    var dl = deadline(j.days);
+    var sal = salaryText(j.salary);
+    var isOpen = !!open[j.id];
+    var isSaved = !!saved[j.id];
+    var isApplied = !!applied[j.id];
+    var badge = j.example ? t("example") : t("pending");
+    var altTitle = j.title[other()] !== j.title[lang] ? '<p class="alt">' + esc(j.title[other()]) + "</p>" : "";
+    var reqList = j.reqs[lang].length ? "<ul>" + j.reqs[lang].map(function (r) { return "<li>" + esc(r) + "</li>"; }).join("") + "</ul>" : "";
+    return '<li class="job' + (j.fresh ? " fresh" : "") + '">' +
+      '<div class="job-head"><div><h3>' + esc(j.title[lang]) + "</h3>" + altTitle + "</div>" +
+      '<span class="chip plain">' + esc(badge) + "</span></div>" +
+      '<p class="meta">' + esc(j.org[lang]) + " · " + esc(PLACES[j.place][lang]) + "</p>" +
+      '<div class="chips"><span class="chip">' + esc(TYPES[j.type][lang]) + '</span><span class="chip">' + esc(FIELDS[j.field][lang]) + "</span>" +
+      (dl ? '<span class="chip' + (dl.warn ? " warn" : " plain") + '">' + esc(dl.text) + "</span>" : "") +
+      (isApplied ? '<span class="chip done">' + esc(t("applied")) + "</span>" : "") + "</div>" +
+      '<div class="job-foot"><span class="salary' + (sal ? "" : " none") + '">' + esc(sal || t("noSalary")) + "</span>" +
+      '<div class="actions"><button type="button" class="btn quiet" data-save="' + j.id + '" aria-pressed="' + isSaved + '">' + esc(isSaved ? t("saved") : t("save")) + '</button>' +
+      '<button type="button" class="btn quiet" data-applied="' + j.id + '" aria-pressed="' + isApplied + '">' + esc(isApplied ? t("applied") : t("markApplied")) + '</button>' +
+      '<button type="button" class="btn" data-toggle="' + j.id + '" aria-expanded="' + isOpen + '" aria-controls="d-' + p + j.id + '">' + esc(isOpen ? t("hide") : t("details")) + "</button></div></div>" +
+      '<div class="detail" id="d-' + p + j.id + '"' + (isOpen ? "" : " hidden") + ">" +
+      (j.desc[lang] ? "<div><h4>" + esc(t("about")) + "</h4><p>" + esc(j.desc[lang]) + "</p></div>" : "") +
+      (reqList ? "<div><h4>" + esc(t("reqs")) + "</h4>" + reqList + "</div>" : "") +
+      "<div><h4>" + esc(t("apply")) + '</h4><div class="contact"><code>' + esc(j.contact) + '</code><button type="button" class="btn quiet" data-copy="' + esc(j.contact) + '">' + esc(t("copy")) + '</button><button type="button" class="btn quiet" data-share="' + j.id + '">' + esc(t("share")) + '</button><a class="btn quiet" target="_blank" rel="noopener" href="' + esc(telegramHref(j)) + '">' + esc(t("telegram")) + "</a></div>" +
+      '<p class="hint">' + esc(t("applyHint")) + "</p></div></div></li>";
+  }
+
+  function render() {
+    var list = JOBS.filter(matches).sort(function (a, b) {
+      if (state.sort === "salary" && !a.fresh && !b.fresh) return monthly(b.salary) - monthly(a.salary);
+      return sortKey(a) - sortKey(b);
+    });
+    var n = list.length;
+    var sc = JOBS.filter(function (j) { return saved[j.id]; }).length;
+    var ac = JOBS.filter(function (j) { return applied[j.id]; }).length;
+    $("savedOnly").textContent = t("savedJobs") + " (" + sc + ")";
+    $("savedOnly").setAttribute("aria-pressed", String(!!state.saved));
+    $("appliedOnly").textContent = t("appliedJobs") + " (" + ac + ")";
+    ["week", "salary", "applied"].forEach(function (k) {
+      document.querySelector('[data-flag="' + k + '"]').setAttribute("aria-pressed", String(!!state[k]));
+    });
+    $("count").textContent = lang === "am" ? n + " ሥራዎች" : n + (n === 1 ? " job" : " jobs");
+    $("jobs").innerHTML = n ? list.map(function (j) { return card(j, ""); }).join("") :
+      '<li class="empty"><span>' + esc(t("empty")) + '</span><button type="button" class="btn" data-clear="1">' + esc(t("clear")) + "</button></li>";
+  }
+
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(function (el) { el.textContent = t(el.getAttribute("data-i18n")); });
+    document.querySelectorAll("[data-i18n-ph]").forEach(function (el) { el.setAttribute("placeholder", t(el.getAttribute("data-i18n-ph"))); });
+    document.querySelectorAll("[data-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang)); });
+    fillSelect($("fField"), FIELDS, true); fillSelect($("fType"), TYPES, true); fillSelect($("fPlace"), PLACES, true);
+    fillSelect($("fSort"), SORTS, false); $("fSort").value = state.sort;
+    fillSelect($("pField"), FIELDS, false); fillSelect($("pType"), TYPES, false); fillSelect($("pPlace"), PLACES, false);
+    render(); renderHome(); renderTips(); renderChecks(); applyThemeLabel();
+  }
+
+  function renderHome() {
+    var html = "";
+    Object.keys(FIELDS).forEach(function (k) {
+      var c = JOBS.filter(function (j) { return j.field === k; }).length;
+      html += '<button type="button" class="fieldlink" data-field="' + k + '"><span>' + esc(FIELDS[k][lang]) + "</span><b>" + c + "</b></button>";
+    });
+    $("fieldLinks").innerHTML = html;
+    var soon = JOBS.filter(function (j) { return j.days !== null && j.days !== undefined && j.days >= 0; })
+      .sort(function (a, b) { return a.days - b.days; }).slice(0, 3);
+    $("homeJobs").innerHTML = soon.map(function (j) { return card(j, "h-"); }).join("");
+    var openN = JOBS.filter(function (j) { return j.days === null || j.days === undefined || j.days >= 0; }).length;
+    var weekN = JOBS.filter(function (j) { return j.days !== null && j.days !== undefined && j.days >= 0 && j.days <= 7; }).length;
+    var savedN = JOBS.filter(function (j) { return saved[j.id]; }).length;
+    var appliedN = JOBS.filter(function (j) { return applied[j.id]; }).length;
+    var bits = lang === "am"
+      ? [openN + " ክፍት ሥራዎች", weekN + " በ7 ቀን ውስጥ ይዘጋሉ", savedN + " የተቀመጡ", appliedN + " ያመለከትኩባቸው"]
+      : [openN + (openN === 1 ? " open job" : " open jobs"), weekN + " closing this week", savedN + " saved", appliedN + " applied"];
+    $("statline").innerHTML = bits.map(function (b) { var p = b.split(" "); return "<b>" + esc(p[0]) + "</b> " + esc(p.slice(1).join(" ")); }).join(" · ");
+  }
+
+  function renderChecks() {
+    var done = 0;
+    $("checks").innerHTML = CHECKS.map(function (c, i) {
+      var on = !!checked[i]; if (on) done++;
+      return '<li><label><input type="checkbox" data-check="' + i + '"' + (on ? " checked" : "") + "><span>" + esc(c[lang]) + "</span></label></li>";
+    }).join("");
+    $("checkBar").style.width = Math.round(done / CHECKS.length * 100) + "%";
+    $("checkLabel").textContent = lang === "am" ? done + " ከ" + CHECKS.length + " ተጠናቅቋል" : done + " of " + CHECKS.length + " done";
+  }
+
+  function renderTips() {
+    $("tipsGrid").innerHTML = TIPS.map(function (c) {
+      return '<section class="tipcard' + (c.flag ? " flag" : "") + '"><h3>' + esc(c.title[lang]) + "</h3><ul>" +
+        c.items[lang].map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("") + "</ul></section>";
+    }).join("");
+  }
+
+  function clearFilters() {
+    state = { q: "", field: "", type: "", place: "", saved: false, week: false, salary: false, applied: false, sort: state.sort };
+    $("q").value = ""; $("fField").value = ""; $("fType").value = ""; $("fPlace").value = "";
+    render();
+  }
+
+  document.querySelectorAll("[data-lang]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      lang = b.getAttribute("data-lang");
+      try { localStorage.setItem("sira-lang", lang); } catch (e) {}
+      applyLang();
+    });
+  });
+  $("q").addEventListener("input", function (e) { state.q = e.target.value.trim(); render(); });
+  [["fField", "field"], ["fType", "type"], ["fPlace", "place"]].forEach(function (p) {
+    $(p[0]).addEventListener("change", function (e) { state[p[1]] = e.target.value; render(); });
+  });
+  $("clear").addEventListener("click", clearFilters);
+  // The Post a job buttons and the page routes are set up at the end of this script.
+
+  function onJobClick(e) {
+    var sv = e.target.closest("[data-save]");
+    if (sv) {
+      var sid = sv.getAttribute("data-save");
+      saved[sid] = !saved[sid];
+      persistSaved();
+      var host = e.currentTarget;
+      render(); renderHome();
+      var again = host.querySelector('[data-save="' + sid + '"]');
+      if (again) again.focus();
+      return;
+    }
+    var ap = e.target.closest("[data-applied]");
+    if (ap) {
+      var aid = ap.getAttribute("data-applied");
+      applied[aid] = !applied[aid];
+      saveSet("sira-applied", applied);
+      var host2 = e.currentTarget;
+      render(); renderHome();
+      var again2 = host2.querySelector('[data-applied="' + aid + '"]');
+      if (again2) again2.focus();
+      return;
+    }
+    var sh = e.target.closest("[data-share]");
+    if (sh) { shareJob(sh); return; }
+    var tgl = e.target.closest("[data-toggle]");
+    if (tgl) {
+      var id = tgl.getAttribute("data-toggle");
+      open[id] = !open[id];
+      tgl.closest(".job").querySelector(".detail").hidden = !open[id];
+      tgl.setAttribute("aria-expanded", String(open[id]));
+      tgl.textContent = open[id] ? t("hide") : t("details");
+      return;
+    }
+    var cp = e.target.closest("[data-copy]");
+    if (cp) {
+      var text = cp.getAttribute("data-copy");
+      var done = function () { cp.textContent = t("copied"); setTimeout(function () { cp.textContent = t("copy"); }, 1500); };
+      var fallback = function () {
+        var code = cp.previousElementSibling;
+        var r = document.createRange(); r.selectNodeContents(code);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      };
+      try { navigator.clipboard.writeText(text).then(done, fallback); } catch (err) { fallback(); }
+      return;
+    }
+    if (e.target.closest("[data-clear]")) clearFilters();
+  }
+  $("jobs").addEventListener("click", onJobClick);
+  $("homeJobs").addEventListener("click", onJobClick);
+
+  $("postForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var title = $("pTitle").value.trim(), org = $("pOrg").value.trim(), contact = $("pContact").value.trim();
+    var msg = $("msg");
+    if (!title || !org || !contact) { msg.className = "msg err"; msg.textContent = t("needFields"); return; }
+    var days = null, dv = $("pDate").value;
+    if (dv) {
+      var p = dv.split("-");
+      var d = new Date(+p[0], +p[1] - 1, +p[2]);
+      var now = new Date(); now = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      days = Math.round((d - now) / 86400000);
+    }
+    var desc = $("pDesc").value.trim();
+    var sal = $("pSalary").value.trim();
+    JOBS.forEach(function (j) { j.fresh = false; });
+    var id = "u" + Date.now();
+    JOBS.unshift({
+      id: id, fresh: true, example: false,
+      title: { en: title, am: title }, org: { en: org, am: org },
+      place: $("pPlace").value, field: $("pField").value, type: $("pType").value,
+      salary: sal || null, days: days,
+      desc: { en: desc, am: desc }, reqs: { en: [], am: [] }, contact: contact
+    });
+    open[id] = true;
+    clearFilters();
+    msg.className = "msg ok"; msg.textContent = t("posted");
+    e.target.reset();
+    $("jobs").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  applyLang();
+
+  var ROUTES = ["home", "jobs", "tips"];
+  function go(route, noScroll) {
+    if (ROUTES.indexOf(route) === -1) route = "home";
+    ROUTES.forEach(function (r) { $("view-" + r).hidden = r !== route; });
+    document.querySelectorAll(".nav a").forEach(function (a) {
+      if (a.getAttribute("data-route") === route) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    });
+    if (route === "home") renderHome();
+    if (route === "jobs") render();
+    try { history.replaceState(null, "", "#" + route); } catch (err) {}
+    if (!noScroll) window.scrollTo(0, 0);
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("[data-route]");
+    if (a) { e.preventDefault(); go(a.getAttribute("data-route")); }
+  });
+  window.addEventListener("hashchange", function () { go(location.hash.slice(1), true); });
+
+  $("fieldLinks").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-field]");
+    if (!b) return;
+    clearFilters();
+    state.field = b.getAttribute("data-field");
+    $("fField").value = state.field;
+    render();
+    go("jobs");
+  });
+  $("heroSearch").addEventListener("submit", function (e) {
+    e.preventDefault();
+    clearFilters();
+    var v = $("heroQ").value.trim();
+    state.q = v;
+    $("q").value = v;
+    render();
+    go("jobs");
+  });
+  function postNow() {
+    go("jobs", true);
+    $("post").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("pTitle").focus({ preventScroll: true });
+  }
+  $("goPost").addEventListener("click", postNow);
+  $("ctaPost").addEventListener("click", postNow);
+
+  try {
+    var th = localStorage.getItem("sira-theme");
+    if (th === "dark" || th === "light") document.documentElement.setAttribute("data-theme", th);
+  } catch (err) {}
+  applyThemeLabel();
+  $("themeBtn").addEventListener("click", function () {
+    var next = effectiveTheme() === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("sira-theme", next); } catch (err) {}
+    applyThemeLabel();
+  });
+  $("savedOnly").addEventListener("click", function () { state.saved = !state.saved; render(); });
+  document.querySelectorAll("[data-flag]").forEach(function (b) {
+    b.addEventListener("click", function () { var k = b.getAttribute("data-flag"); state[k] = !state[k]; render(); });
+  });
+  $("fSort").addEventListener("change", function (e) { state.sort = e.target.value; render(); });
+  $("checks").addEventListener("change", function (e) {
+    var c = e.target.closest("[data-check]");
+    if (!c) return;
+    checked[c.getAttribute("data-check")] = c.checked;
+    saveSet("sira-check", checked);
+    renderChecks();
+    var again3 = $("checks").querySelector('[data-check="' + c.getAttribute("data-check") + '"]');
+    if (again3) again3.focus();
+  });
+  $("about").addEventListener("click", function (e) {
+    var cp = e.target.closest("[data-copy]");
+    if (!cp) return;
+    var done = function () { cp.textContent = t("copied"); setTimeout(function () { cp.textContent = t("copy"); }, 1500); };
+    var fallback = function () {
+      var r = document.createRange(); r.selectNodeContents(cp.previousElementSibling);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    };
+    try { navigator.clipboard.writeText(cp.getAttribute("data-copy")).then(done, fallback); } catch (err) { fallback(); }
+  });
+  $("checkReset").addEventListener("click", function () { checked = {}; saveSet("sira-check", checked); renderChecks(); });
+
+  go((location.hash || "").slice(1), true);
+})();
+</script>
+
+</body></html>
